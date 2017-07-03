@@ -1,0 +1,22 @@
+{
+  "intents": [
+    {
+      "intent": "GetCharging",
+      "slots": [
+        {
+          "name":"car",
+          "type":"CAR"
+        }
+      ]
+    },
+    {
+      "intent": "HonkHorn",
+      "slots":[
+        {
+          "name":"car",
+          "type":"CAR"
+        }
+      ]
+    }
+  ]
+}

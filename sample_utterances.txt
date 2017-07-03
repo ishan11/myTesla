@@ -1,0 +1,2 @@
+GetCharging what is the charging status of my {car}
+HonkHorn to honk {car}'s horn
