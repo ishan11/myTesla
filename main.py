@@ -77,6 +77,8 @@ def onIntent(intentRequest, session,headers,vehicle_id):
         return chargingResponse(headers, vehicle_id)
     elif intentName == "HonkHorn":
         return honkingResponse(headers, vehicle_id)
+    elif intentName == "Lock_Unlock":
+        return changeLockState(headers, vehicle_id, intent)
 
 def chargingResponse(headers,vehicle_id):
     print(headers)
@@ -102,7 +104,6 @@ def chargingResponse(headers,vehicle_id):
 def honkingResponse(headers,vehicle_id):
     res = requests.post("https://owner-api.teslamotors.com/api/1/vehicles/" + str(vehicle_id) + "/command/honk_horn", headers = headers)
     if(res.status_code == 200):
-        res = res.json()
         speechOutput = "Car Horn Honked."
         cardTitle = "Car Horn Honked."
     else:
@@ -112,6 +113,28 @@ def honkingResponse(headers,vehicle_id):
     shouldEndSession = True
 
     return(buildSpeechletResponse(cardTitle,speechOutput,repromptText,shouldEndSession))
+
+def changeLockState(headers, vehicle_id, intent):
+    if(intent['slots']['lockstate']['value'] == "unlock"):
+        unlock(headers,vehicle_id)
+        speechOutput = "Ok, I'm unlocking your car"
+        cardTitle = "Ok, I'm unlocking your car"
+    elif(intent['slots']['lockstate']['value'] == "lock"):
+        lock(headers,vehicle_id)
+        speechOutput = "Ok, I'm locking your car"
+        cardTitle = "Ok, I'm locking your car"
+    else:
+        speechOutput = "Error connceting to Tesla Servers. Please try again"
+        cardTitle = speechOutput
+    repromptText = "I didnt understand that. Please try again"
+    shouldEndSession = True
+
+    return(buildSpeechletResponse(cardTitle, speechOutput,repromptText,shouldEndSession))
+
+def unlock(headers,vehicle_id):
+    requests.post("https://owner-api.teslamotors.com/api/1/vehicles/"+str(vehicle_id) + "/command/door_unlock", headers = headers)
+def lock(headers, vehicle_id):
+    requests.post("https://owner-api.teslamotors.com/api/1/vehicles/" + str(vehicle_id) + "/command/door_lock", headers = headers)
 
 # --------------- Helpers that build all of the responses -----------------------
 def buildSpeechletResponse(title, output, repromptText, shouldEndSession):
