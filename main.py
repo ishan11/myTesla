@@ -81,6 +81,8 @@ def onIntent(intentRequest, session,headers,vehicle_id):
         return changeLockState(headers, vehicle_id, intent)
     elif intentName == "GetCarStatus":
         return carStatus(headers,vehicle_id, intent)
+    elif intentName == "AC_State":
+        return changeACState(headers, vehicle_id, intent)
     elif intentName == "HelpIntent":
         return getWelcomeResponse()
     else:
@@ -162,7 +164,32 @@ def carStatus(headers,vehicle_id, intent):
 
     return(buildSpeechletResponse(cardTitle,speechOutput,repromptText,shouldEndSession))
 
+def changeACState(headers, vehicle_id, intent):
+    if(intent['slots']['power']['value'] == "on"):
+        res = requests.post("https://owner-api.teslamotors.com/api/1/vehicles/" + str(vehicle_id) + "/command/auto_conditioning_start", headers = headers)
+        if(res.status_code == 200):
+            speechOutput = "Ok, HVAC system turned on"
+            cardTitle = speechOutput
+        else:
+            speechOutput = "Error connceting to Tesla Server. Please try again"
+            cardTitle = speechOutput
+    elif(intent['slots']['power']['value'] == "off"):
+        res = requests.post("https://owner-api.teslamotors.com/api/1/vehicles/" + str(vehicle_id) + "/command/auto_conditioning_stop", headers = headers)
+        if(res.status_code == 200):
+            speechOutput = "Ok, HVAC system turned off"
+            cardTitle = speechOutput
+        else:
+            speechOutput = "Error connceting to Tesla Server. Please try again"
+            cardTitle = speechOutput
+    else:
+        speechOutput = "Error connecting to Tesla Server. Please try again"
+        cardTitle = speechOutput
 
+    repromptText = "I didnt understand that. Please try again"
+    shouldEndSession = True
+
+    return(buildSpeechletResponse(cardTitle,speechOutput,repromptText,shouldEndSession))
+    
 # --------------- Helpers that build all of the responses -----------------------
 def buildSpeechletResponse(title, output, repromptText, shouldEndSession):
     print("Entering buildSpeechletResponse")

@@ -5,3 +5,4 @@ GetCarStatus how many {status} are on my car
 GetCarStatus what is the {status} reading
 GetCarStatus what {status} software is on my car
 GetCarStatus what {status} version is my car running
+AC_State to turn {power} {conditioning}

@@ -35,6 +35,19 @@
           "type" : "STATUS"
         }
       ]
+    },
+    {
+      "intent" : "AC_State",
+      "slots" : [
+        {
+          "name" : "power",
+          "type" : "POWER"
+        },
+        {
+           "name" : "conditioning",
+           "type" : "CONDITIONING"
+        }
+      ]
     }
   ]
 }

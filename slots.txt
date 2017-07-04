@@ -12,3 +12,12 @@ version
 software
 miles
 odometer
+
+POWER
+on
+off
+
+CONDITIONING
+cooling
+heating
+air conditioning
