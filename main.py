@@ -84,7 +84,7 @@ def onIntent(intentRequest, session,headers,vehicle_id):
     elif intentName == "HelpIntent":
         return getWelcomeResponse()
     else:
-        print "Invalid Intent: " + intentName
+        print ("Invalid Intent: " + intentName)
         raise
 
 def chargingResponse(headers,vehicle_id):
@@ -147,10 +147,10 @@ def carStatus(headers,vehicle_id, intent):
     res = requests.get("https://owner-api.teslamotors.com/api/1/vehicles/"+ str(vehicle_id) + "/data_request/vehicle_state", headers = headers)
     if(res.status_code == 200):
         res = res.json()
-        if(intent['slots']['status']['value'] == "miles" OR intent['slots']['status']['value'] == "odometer"):
+        if(intent['slots']['status']['value'] == "miles" or intent['slots']['status']['value'] == "odometer"):
             speechOutput = "Your car has " + str(res["response"]["odometer"]) + " miles on it."
             cardTitle = speechOutput
-        elif(intent['slots']['status']['value'] == "version" OR intent['slots']['status']['value'] == "software"):
+        elif(intent['slots']['status']['value'] == "version" or intent['slots']['status']['value'] == "software"):
             speechOutput = "Your car is running version " + str(res["response"]["car_version"])
             cardTitle = speechOutput
     else:
