@@ -1,0 +1,8 @@
+CAR
+tesla
+car
+stella
+
+LOCKSTATE
+unlock
+lockstate

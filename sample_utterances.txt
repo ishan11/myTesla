@@ -1,2 +1,3 @@
 GetCharging what is the charging status of my {car}
-HonkHorn to honk {car}'s horn
+HonkHorn to honk {car} horn
+Lock_Unlock to {lockstate}

@@ -4,17 +4,26 @@
       "intent": "GetCharging",
       "slots": [
         {
-          "name":"car",
-          "type":"CAR"
+          "name": "car",
+          "type": "CAR"
         }
       ]
     },
     {
       "intent": "HonkHorn",
-      "slots":[
+      "slots": [
         {
-          "name":"car",
-          "type":"CAR"
+          "name": "car",
+          "type": "CAR"
+        }
+      ]
+    },
+    {
+      "intent": "Lock_Unlock",
+      "slots": [
+        {
+          "name": "lockstate",
+          "type": "LOCKSTATE"
         }
       ]
     }
