@@ -26,6 +26,15 @@
           "type": "LOCKSTATE"
         }
       ]
+    },
+    {
+      "intent" : "GetCarStatus",
+      "slots": [
+        {
+          "name" : "status",
+          "type" : "STATUS"
+        }
+      ]
     }
   ]
 }

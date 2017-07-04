@@ -79,6 +79,13 @@ def onIntent(intentRequest, session,headers,vehicle_id):
         return honkingResponse(headers, vehicle_id)
     elif intentName == "Lock_Unlock":
         return changeLockState(headers, vehicle_id, intent)
+    elif intentName == "GetCarStatus":
+        return carStatus(headers,vehicle_id, intent)
+    elif intentName == "HelpIntent":
+        return getWelcomeResponse()
+    else:
+        print "Invalid Intent: " + intentName
+        raise
 
 def chargingResponse(headers,vehicle_id):
     print(headers)
@@ -135,6 +142,26 @@ def unlock(headers,vehicle_id):
     requests.post("https://owner-api.teslamotors.com/api/1/vehicles/"+str(vehicle_id) + "/command/door_unlock", headers = headers)
 def lock(headers, vehicle_id):
     requests.post("https://owner-api.teslamotors.com/api/1/vehicles/" + str(vehicle_id) + "/command/door_lock", headers = headers)
+
+def carStatus(headers,vehicle_id, intent):
+    res = requests.get("https://owner-api.teslamotors.com/api/1/vehicles/"+ str(vehicle_id) + "/data_request/vehicle_state", headers = headers)
+    if(res.status_code == 200):
+        res = res.json()
+        if(intent['slots']['status']['value'] == "miles" OR intent['slots']['status']['value'] == "odometer"):
+            speechOutput = "Your car has " + str(res["response"]["odometer"]) + " miles on it."
+            cardTitle = speechOutput
+        elif(intent['slots']['status']['value'] == "version" OR intent['slots']['status']['value'] == "software"):
+            speechOutput = "Your car is running version " + str(res["response"]["car_version"])
+            cardTitle = speechOutput
+    else:
+        speechOutput = "Error connecting to Tesla Servers. Please try again"
+        cardTitle = speechOutput
+
+    repromptText = "I didnt understand that. Please try again"
+    shouldEndSession = True
+
+    return(buildSpeechletResponse(cardTitle,speechOutput,repromptText,shouldEndSession))
+
 
 # --------------- Helpers that build all of the responses -----------------------
 def buildSpeechletResponse(title, output, repromptText, shouldEndSession):

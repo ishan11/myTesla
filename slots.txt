@@ -6,3 +6,9 @@ stella
 LOCKSTATE
 unlock
 lockstate
+
+STATUS
+version
+software
+miles
+odometer

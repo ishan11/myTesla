@@ -1,3 +1,7 @@
 GetCharging what is the charging status of my {car}
 HonkHorn to honk {car} horn
 Lock_Unlock to {lockstate}
+GetCarStatus how many {status} are on my car
+GetCarStatus what is the {status} reading
+GetCarStatus what {status} software is on my car
+GetCarStatus what {status} version is my car running
