@@ -46,6 +46,15 @@
         {
            "name" : "conditioning",
            "type" : "CONDITIONING"
+        },
+      ]
+    },
+    {
+      "intent" : "FlashLight",
+      "slots" : [
+        {
+          "name" : "car",
+          "type" : "CAR"
         }
       ]
     }

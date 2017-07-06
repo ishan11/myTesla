@@ -83,6 +83,8 @@ def onIntent(intentRequest, session,headers,vehicle_id):
         return carStatus(headers,vehicle_id, intent)
     elif intentName == "AC_State":
         return changeACState(headers, vehicle_id, intent)
+    elif intentName == "FlashLight":
+        return flashLights(headers, vehicle_id)
     elif intentName == "HelpIntent":
         return getWelcomeResponse()
     else:
@@ -189,7 +191,21 @@ def changeACState(headers, vehicle_id, intent):
     shouldEndSession = True
 
     return(buildSpeechletResponse(cardTitle,speechOutput,repromptText,shouldEndSession))
-    
+
+def flashLights(headers, vehicle_id):
+    res = requests.post("https://owner-api.teslamotors.com/api/1/vehicles/" + str(vehicle_id) + "/command/flash_lights", headers = headers)
+    if(res.status_code == 200):
+        speechOutput = "Ok, Lights Flashed"
+        cardTitle = speechOutput
+    else:
+        speechOutput = "Error connecting to Tesla Server. Please try again"
+        cardTitle = speechOutput
+
+    repromptText = "I didnt understand that. Please try again"
+    shouldEndSession = True
+
+    return(buildSpeechletResponse(cardTitle,speechOutput,repromptText,shouldEndSession))
+
 # --------------- Helpers that build all of the responses -----------------------
 def buildSpeechletResponse(title, output, repromptText, shouldEndSession):
     print("Entering buildSpeechletResponse")
