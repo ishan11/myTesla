@@ -2,9 +2,11 @@ import requests
 import os
 import json
 import time
+from geopy.geocoders import Nominatim
 
 EMAIL = ""
 PASSWORD = ""
+geolocator = Nominatim()
 
 def lambda_handler(event, context):
 
@@ -32,27 +34,25 @@ def lambda_handler(event, context):
     return (response)
 
 def getAccessToken():
-    print('Entering getAccessToken')
     params = { "grant_type" : "password", "client_id" : "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384", "client_secret" : "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3", "email" : EMAIL, "password" : PASSWORD }
     response  = requests.post("https://owner-api.teslamotors.com/oauth/token/", params = params).json()
 
     headers = {"Authorization" : "Bearer " + response["access_token"]}
-    print(headers)
     return(headers)
 
 
 def getVehicleId(headers):
-    print("Entering getVehicleId")
-    print(headers)
     vehicles = requests.get("https://owner-api.teslamotors.com/api/1/vehicles", headers= headers).json()
     vehicle_id = vehicles["response"][0]["id"]
-    print(vehicle_id)
     return vehicle_id
 
 
 def onSessionStarted(requestId, session):
     print("onSessionStarted requestId=" + requestId + ", sessionId=" + session['sessionId'])
 
+def onSessionEnded(sessionEndedRequest, session):
+    # Add cleanup logic here
+    print ("Session ended")
 
 def onLaunch(launchRequest, session):
     # Dispatch to your skill's launch.
@@ -85,15 +85,17 @@ def onIntent(intentRequest, session,headers,vehicle_id):
         return changeACState(headers, vehicle_id, intent)
     elif intentName == "FlashLight":
         return flashLights(headers, vehicle_id)
-    elif intentName == "HelpIntent":
+    elif intentName == "Location":
+        return getLocation(headers,vehicle_id)
+    elif intentName == "AMAZON.HelpIntent":
         return getWelcomeResponse()
+    elif intentName == "AMAZON.StopIntent":
+        return onSessionEnded()
     else:
         print ("Invalid Intent: " + intentName)
         raise
 
 def chargingResponse(headers,vehicle_id):
-    print(headers)
-    print(vehicle_id)
     res = requests.get("https://owner-api.teslamotors.com/api/1/vehicles/" + vehicle_id + "/data_request/charge_state", headers = headers)
     if(res.status_code == 200):
         res = res.json()
@@ -206,9 +208,27 @@ def flashLights(headers, vehicle_id):
 
     return(buildSpeechletResponse(cardTitle,speechOutput,repromptText,shouldEndSession))
 
+def getLocation(headers,vehicle_id):
+    res = requests.get("https://owner-api.teslamotors.com/api/1/vehicles/"+str(vehicle_id)+"/data_request/drive_state",headers=headers)
+    if(res.status_code == 200):
+        res = res.json()
+        latitude = str(res["response"]["latitude"])
+        longitude = str(res["response"]["longitude"])
+        latLong = latitude + "," + longitude
+        location = geolocator.reverse(latLong)
+        speechOutput = "Your Tesla is at " + location.address
+        cardTitle = speechOutput
+    else:
+        speechOutput = "Error connecting to Tesla Server. Please try again"
+        cardTitle = speechOutput
+
+    repromptText = "I didnt understand that. Please try again"
+    shouldEndSession = True
+
+    return(buildSpeechletResponse(cardTitle,speechOutput,repromptText,shouldEndSession))
+
 # --------------- Helpers that build all of the responses -----------------------
 def buildSpeechletResponse(title, output, repromptText, shouldEndSession):
-    print("Entering buildSpeechletResponse")
     return ({
         "outputSpeech": {
             "type": "PlainText",

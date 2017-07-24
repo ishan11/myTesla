@@ -7,3 +7,5 @@ GetCarStatus what {status} software is on my car
 GetCarStatus what {status} version is my car running
 AC_State to turn {power} {conditioning}
 FlashLight to flash lights
+Location where my {car} is
+Location where it is

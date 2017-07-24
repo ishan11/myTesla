@@ -46,7 +46,7 @@
         {
            "name" : "conditioning",
            "type" : "CONDITIONING"
-        },
+        }
       ]
     },
     {
@@ -57,6 +57,21 @@
           "type" : "CAR"
         }
       ]
+    },
+    {
+      "intent" : "Location",
+      "slots" : [
+        {
+          "name" : "car",
+          "type" : "CAR"
+        }
+      ]
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
     }
   ]
 }
