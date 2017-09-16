@@ -9,3 +9,5 @@ AC_State to turn {power} {conditioning}
 FlashLight to flash lights
 Location where my {car} is
 Location where it is
+StartCar to start
+StartCar to turn on

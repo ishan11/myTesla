@@ -87,6 +87,8 @@ def onIntent(intentRequest, session,headers,vehicle_id):
         return flashLights(headers, vehicle_id)
     elif intentName == "Location":
         return getLocation(headers,vehicle_id)
+    elif intentName == "startCar":
+        return startCar(headers,vehicle_id)
     elif intentName == "AMAZON.HelpIntent":
         return getWelcomeResponse()
     elif intentName == "AMAZON.StopIntent":
@@ -100,11 +102,11 @@ def chargingResponse(headers,vehicle_id):
     if(res.status_code == 200):
         res = res.json()
         if res["response"]["charging_state"] == "Complete":
-            speechOutput = "Your car has completed charging. With a range of " + str(res["response"]["battery_range"]) + "."
-            cardTitle = "Your car has completed charging. With a range of " + str(res["response"]["battery_range"]) + "."
+            speechOutput = "Your car has completed charging. With a range of " + str(res["response"]["battery_range"]) + "miles."
+            cardTitle = "Your car has completed charging. With a range of " + str(res["response"]["battery_range"]) + "miles."
         else:
-            speechOutput = "Your car is " + str(res["response"]["battery_level"]) + " charged. With a range of " + str(res["response"]["battery_range"]) + "."
-            cardTitle = "Your car is " + str(res["response"]["battery_level"]) + " charged. With a range of " + str(res["response"]["battery_range"]) + "."
+            speechOutput = "Your car is " + str(res["response"]["battery_level"]) + " percent charged. With a range of " + str(res["response"]["battery_range"]) + "miles."
+            cardTitle = "Your car is " + str(res["response"]["battery_level"]) + " percent charged. With a range of " + str(res["response"]["battery_range"]) + "miles."
     else:
         speechOutput = "Error connecting to Tesla Servers. Please try again"
         cardTitle = "Error connecting to Tesla Servers. Please try again"
@@ -226,6 +228,23 @@ def getLocation(headers,vehicle_id):
     shouldEndSession = True
 
     return(buildSpeechletResponse(cardTitle,speechOutput,repromptText,shouldEndSession))
+
+def startCar(headers,vehicle_id):
+    params = {"password":PASSWORD}
+    res = requests.post("https://owner-api.teslamotors.com/api/1/vehicles/"+str(vehicle_id)+"/command/remote_start_drive", params = params, headers = headers)
+
+    if(res.status_code == 200):
+        speechOutput = "Ok, your Tesla has been started"
+        cardTitle = speechOutput
+    else:
+        speechOutput = "Error connecting to Tesla Server. Please try again"
+        cardTitle = speechOutput
+
+    repromptText = "I didnt understand that. Please try again"
+    shouldEndSession = True
+
+    return(buildSpeechletResponse(cardTitle,speechOutput,repromptText,shouldEndSession))
+
 
 # --------------- Helpers that build all of the responses -----------------------
 def buildSpeechletResponse(title, output, repromptText, shouldEndSession):

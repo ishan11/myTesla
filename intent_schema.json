@@ -67,6 +67,16 @@
         }
       ]
     },
+
+    {
+      "intent": "StartCar",
+      "slots": [
+        {
+          "name": "car",
+          "type": "CAR"
+        }
+      ]
+    },
     {
       "intent": "AMAZON.HelpIntent"
     },
